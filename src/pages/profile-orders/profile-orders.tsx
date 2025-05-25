@@ -12,27 +12,28 @@ import {
   selectMyOrders,
   selectIsMyOrdersLoading,
   fetchMyOrders
-} from '../../services/slices/orderSlice';
+} from '../../services/slices/myOrdersSlice';
+import { selectUserLoading } from '../../services/slices/userSlice';
 
 export const ProfileOrders: FC = () => {
   const dispatch = useDispatch();
   const isIngredientsLoading = useSelector(selectIsLoading);
   const isIngredientsLoaded = useSelector(selectIsLoaded);
   const isOrdersLoading = useSelector(selectIsMyOrdersLoading);
+  const isLoading = useSelector(selectUserLoading);
+
   useEffect(() => {
     if (!isIngredientsLoaded) {
       dispatch(fetchIngredients());
-      console.log('get ingredients! twice');
     }
   }, [dispatch, isIngredientsLoaded]);
   useEffect(() => {
     dispatch(fetchMyOrders());
-    console.log('get my orders, twice');
   }, [dispatch]);
 
   const orders: TOrder[] = useSelector(selectMyOrders);
 
-  if (isIngredientsLoading || isOrdersLoading) {
+  if (isIngredientsLoading || isOrdersLoading || isLoading) {
     return <Preloader />;
   }
 

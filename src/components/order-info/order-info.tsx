@@ -6,7 +6,7 @@ import { useLocation, useParams } from 'react-router-dom';
 import { useSelector } from '../../services/store';
 import { selectOrderList } from '../../services/slices/ordersSlice';
 import { selectIngredients } from '../../services/slices/ingredientsSlice';
-import { selectMyOrders } from '../../services/slices/orderSlice';
+import { selectMyOrders } from '../../services/slices/myOrdersSlice';
 
 export const OrderInfo: FC = () => {
   const { number } = useParams();

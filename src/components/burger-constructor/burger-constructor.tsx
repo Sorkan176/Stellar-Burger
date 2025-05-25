@@ -11,12 +11,11 @@ import {
   closeOrderModalAction,
   selectOrderModalData,
   selectIsMyOrdersLoading
-} from '../../services/slices/orderSlice';
-import { selectUser } from '../../services/slices/userSlice';
+} from '../../services/slices/myOrdersSlice';
 import { useNavigate } from 'react-router-dom';
+import { getCookie } from '../../utils/cookie';
 
 export const BurgerConstructor: FC = () => {
-  /** TODO: взять переменные , orderRequest и  из стора */
   const constructorItems = useSelector(selectBurgerConstructor);
   const { bun, ingredients } = constructorItems;
   const ingredientIds: string[] = [
@@ -26,13 +25,13 @@ export const BurgerConstructor: FC = () => {
   ];
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const user = useSelector(selectUser);
   const orderRequest = useSelector(selectIsMyOrdersLoading);
   const orderModalData = useSelector(selectOrderModalData);
 
   const onOrderClick = () => {
     if (bun._id.length === 0 || ingredientIds.length === 0) return;
-    if (!user?.email.length) {
+    const token = getCookie('accessToken');
+    if (!token) {
       navigate('/login');
       return;
     }

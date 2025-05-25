@@ -18,15 +18,17 @@ interface UserData {
   user: TUser;
   password: string;
   isLoading: boolean;
+  error: string | null;
 }
 
-const initialState: UserData = {
+export const initialState: UserData = {
   user: {
     email: '',
     name: ''
   },
   password: '',
-  isLoading: false
+  isLoading: false,
+  error: null
 };
 
 export const fetchLogin = createAsyncThunk<
@@ -63,9 +65,10 @@ export const userSlice = createSlice({
       .addCase(fetchLogout.fulfilled, (state) => {
         state.user = initialState.user;
         state.password = '';
-        state.isLoading = true;
+        state.isLoading = false;
         deleteCookie('accessToken');
-        deleteCookie('refreshToken');
+        localStorage.removeItem('refreshToken');
+        state.error = null;
       })
       .addMatcher(
         (
@@ -79,6 +82,7 @@ export const userSlice = createSlice({
           const { user } = action.payload;
           state.user = user;
           state.isLoading = false;
+          state.error = null;
         }
       )
       .addMatcher(
@@ -98,6 +102,7 @@ export const userSlice = createSlice({
           action.type === fetchUser.pending.type,
         (state) => {
           state.isLoading = true;
+          state.error = null;
         }
       )
       .addMatcher(
@@ -112,9 +117,9 @@ export const userSlice = createSlice({
           const { user, refreshToken, accessToken } = action.payload;
           state.user = user;
           setCookie('accessToken', accessToken, { expires: 60 * 60 }); // 60 мин
-          // setCookie('refreshToken', refreshToken, { expires: 30 * 24 * 3600 }); // 30 дней
           localStorage.setItem('refreshToken', refreshToken);
           state.isLoading = false;
+          state.error = null;
         }
       )
       .addMatcher(
@@ -134,16 +139,17 @@ export const userSlice = createSlice({
           action.type === fetchLogout.rejected.type,
         (state, action) => {
           state.isLoading = false;
-          console.log('ERROR ', action.error);
+          state.error = action.error.message || 'Unknown error';
         }
       );
   },
   selectors: {
     /** Селектор возвращающий данные пользователя: email и имя*/
-    selectUser: (userState) => userState.user
+    selectUser: (userState) => userState.user,
+    selectUserLoading: (userState) => userState.isLoading
   }
 });
 
-export const { selectUser } = userSlice.selectors;
+export const { selectUser, selectUserLoading } = userSlice.selectors;
 
 export default userSlice.reducer;

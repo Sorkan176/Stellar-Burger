@@ -9,14 +9,16 @@ interface orderList {
   isLoaded: boolean;
   total: number;
   totalToday: number;
+  error: string | null;
 }
 
-const initialState: orderList = {
+export const initialState: orderList = {
   orders: [],
   isLoading: false,
   isLoaded: false,
   total: 0,
-  totalToday: 0
+  totalToday: 0,
+  error: null
 };
 
 export const fetchOrders = createAsyncThunk<TFeedsResponse>(
@@ -33,6 +35,7 @@ const ordersSlice = createSlice({
     builder
       .addCase(fetchOrders.pending, (state) => {
         state.isLoading = true;
+        state.error = null;
       })
       .addCase(
         fetchOrders.fulfilled,
@@ -42,12 +45,13 @@ const ordersSlice = createSlice({
           state.isLoaded = true;
           state.total = action.payload.total;
           state.totalToday = action.payload.totalToday;
+          state.error = null;
         }
       )
       .addCase(fetchOrders.rejected, (state, action) => {
         state.isLoading = false;
         state.isLoaded = false;
-        console.log('ERROR ', action.error);
+        state.error = action.error.message || 'Unknown error';
       });
   },
   selectors: {

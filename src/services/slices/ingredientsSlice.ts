@@ -7,12 +7,14 @@ interface IngredientListState {
   ingredients: TIngredient[];
   isLoading: boolean;
   isLoaded: boolean;
+  error: string | null;
 }
 
-const initialState: IngredientListState = {
+export const initialState: IngredientListState = {
   ingredients: [],
   isLoading: true,
-  isLoaded: false
+  isLoaded: false,
+  error: null
 };
 
 export const fetchIngredients = createAsyncThunk<TIngredient[]>(
@@ -36,6 +38,7 @@ const ingredientsSlice = createSlice({
       .addCase(fetchIngredients.pending, (state) => {
         state.isLoading = true;
         state.isLoaded = false;
+        state.error = null;
       })
       .addCase(
         fetchIngredients.fulfilled,
@@ -43,11 +46,13 @@ const ingredientsSlice = createSlice({
           state.ingredients = action.payload;
           state.isLoading = false;
           state.isLoaded = true;
+          state.error = null;
         }
       )
-      .addCase(fetchIngredients.rejected, (state) => {
+      .addCase(fetchIngredients.rejected, (state, action) => {
         state.isLoading = false;
         state.isLoaded = false;
+        state.error = action.error.message || 'Unknown error';
       });
   }
 });

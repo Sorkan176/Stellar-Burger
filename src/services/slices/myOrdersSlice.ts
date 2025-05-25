@@ -3,16 +3,18 @@ import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { getOrdersApi, orderBurgerApi, TNewOrderResponse } from '@api';
 const API_URL = process.env.BURGER_API_URL;
 
-interface OrderState {
+interface MyOrdersState {
   isLoading: boolean;
   myOrders: TOrder[];
   orderModalData: TOrder | null;
+  error: string | null;
 }
 
-const initialState: OrderState = {
+export const initialState: MyOrdersState = {
   isLoading: false,
   myOrders: [],
-  orderModalData: null
+  orderModalData: null,
+  error: null
 };
 
 /** Отправить на сервер заказ */
@@ -20,46 +22,53 @@ export const fetchOrder = createAsyncThunk<TNewOrderResponse, string[]>(
   `${API_URL}/order`,
   async (ingredients) => await orderBurgerApi(ingredients)
 );
-
+/** Получить мои заказы */
 export const fetchMyOrders = createAsyncThunk<TOrder[]>(
   `${API_URL}/orders`,
   async () => await getOrdersApi()
 );
 
 /** Слайс, хранящий данные моих заказов */
-const orderSlice = createSlice({
-  name: 'order',
+const MyOrdersSlice = createSlice({
+  name: 'myOrders',
   initialState,
   reducers: {
     closeOrderModalAction: (state) => {
       state.orderModalData = null; // закрываем модалку
-    }
+    },
+    clearMyOrders: () => initialState
   },
   extraReducers: (builder) => {
     builder
       .addCase(fetchOrder.pending, (state) => {
         state.isLoading = true;
+        state.error = null;
       })
       .addCase(fetchOrder.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.orderModalData = action.payload.order; // <-- показываем модалку
+        state.orderModalData = action.payload.order; // показываем модалку
         state.myOrders.push(action.payload.order);
+        state.error = null;
       })
-      .addCase(fetchOrder.rejected, (state) => {
+      .addCase(fetchOrder.rejected, (state, action) => {
         state.isLoading = false;
+        state.error = action.error.message || 'Unknown error';
       })
       .addCase(fetchMyOrders.pending, (state) => {
         state.isLoading = true;
+        state.error = null;
       })
       .addCase(
         fetchMyOrders.fulfilled,
         (state, action: PayloadAction<TOrder[]>) => {
           state.myOrders = action.payload;
           state.isLoading = false;
+          state.error = null;
         }
       )
-      .addCase(fetchMyOrders.rejected, (state) => {
+      .addCase(fetchMyOrders.rejected, (state, action) => {
         state.isLoading = false;
+        state.error = action.error.message || 'Unknown error';
       });
   },
   selectors: {
@@ -70,7 +79,7 @@ const orderSlice = createSlice({
 });
 
 export const { selectOrderModalData, selectIsMyOrdersLoading, selectMyOrders } =
-  orderSlice.selectors;
-export const { closeOrderModalAction } = orderSlice.actions;
+  MyOrdersSlice.selectors;
+export const { closeOrderModalAction, clearMyOrders } = MyOrdersSlice.actions;
 
-export default orderSlice.reducer;
+export default MyOrdersSlice.reducer;

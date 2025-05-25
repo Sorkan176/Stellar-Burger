@@ -19,15 +19,19 @@ import { useDispatch } from '../../services/store';
 import { useEffect } from 'react';
 import { fetchUser } from '../../services/slices/userSlice';
 import { OrderModal } from '../modal/OrderModal';
+import { getCookie } from '../../utils/cookie';
 
 const App = () => {
   const location = useLocation();
   const background = location.state && location.state.background;
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const cookie = getCookie('accessToken');
 
   useEffect(() => {
-    dispatch(fetchUser());
+    if (cookie && cookie.length > 0) {
+      dispatch(fetchUser());
+    }
   }, [dispatch]);
   return (
     <div className={styles.app}>
@@ -75,18 +79,25 @@ const App = () => {
           <Route
             path='/ingredients/:id'
             element={
-              <Modal onClose={() => navigate(-1)} title={'Детали ингредиента'}>
+              <Modal
+                onClose={() => navigate(background.pathname)}
+                title={'Детали ингредиента'}
+              >
                 <IngredientDetails />
               </Modal>
             }
           />
           <Route
             path='/feed/:number'
-            element={<OrderModal onClose={() => navigate(-1)} />}
+            element={
+              <OrderModal onClose={() => navigate(background.pathname)} />
+            }
           />
           <Route
             path='/profile/orders/:number'
-            element={<OrderModal onClose={() => navigate(-1)} />}
+            element={
+              <OrderModal onClose={() => navigate(background.pathname)} />
+            }
           />
         </Routes>
       )}

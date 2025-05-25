@@ -24,13 +24,11 @@ export const Feed: FC = () => {
   useEffect(() => {
     if (!isIngredientsLoaded) {
       dispatch(fetchIngredients());
-      console.log('get ingredients! twice');
     }
   }, [dispatch, isIngredientsLoaded]);
   useEffect(() => {
     if (!isOrdersLoaded) {
       dispatch(fetchOrders());
-      console.log('get feeds, twice');
     }
   }, [dispatch, isOrdersLoaded]);
 
