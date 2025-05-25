@@ -19,7 +19,6 @@ export const ConstructorPage: FC = () => {
   useEffect(() => {
     if (!isIngredientsLoaded) {
       dispatch(fetchIngredients());
-      console.log('get ingredients! twice');
     }
   }, [dispatch, isIngredientsLoaded]);
 
