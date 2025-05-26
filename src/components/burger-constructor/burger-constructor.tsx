@@ -10,7 +10,8 @@ import {
   fetchOrder,
   closeOrderModalAction,
   selectOrderModalData,
-  selectIsMyOrdersLoading
+  selectIsMyOrdersLoading,
+  fetchMyOrders
 } from '../../services/slices/myOrdersSlice';
 import { useNavigate } from 'react-router-dom';
 import { getCookie } from '../../utils/cookie';
@@ -44,10 +45,11 @@ export const BurgerConstructor: FC = () => {
   useEffect(() => {
     if (!orderRequest && shouldFetchOrder) {
       dispatch(fetchOrders());
+      dispatch(fetchMyOrders());
       dispatch(clearConstructor());
       setShouldFetchOrder(false);
     }
-  }, [orderRequest, shouldFetchOrder]);
+  }, [dispatch, orderRequest, shouldFetchOrder]);
 
   const closeOrderModal = () => {
     dispatch(closeOrderModalAction());

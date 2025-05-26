@@ -1,11 +1,10 @@
 import { Navigate, useLocation } from 'react-router-dom';
 import { FC, ReactElement } from 'react';
-import { useSelector } from '../../services/store';
-import { selectUser } from '../../services/slices/userSlice';
+import { getCookie } from '../../utils/cookie';
 
 interface ProtectedRouteProps {
   element: ReactElement;
-  onlyUnAuth?: boolean; // для /login и /register
+  onlyUnAuth?: boolean;
 }
 
 export const ProtectedRoute: FC<ProtectedRouteProps> = ({
@@ -13,9 +12,8 @@ export const ProtectedRoute: FC<ProtectedRouteProps> = ({
   onlyUnAuth = false
 }) => {
   const location = useLocation();
-  const user = useSelector(selectUser);
 
-  const isAuthenticated = !!user.email;
+  const isAuthenticated = !!getCookie('accessToken');
 
   if (onlyUnAuth && isAuthenticated) {
     return <Navigate to='/' replace />;

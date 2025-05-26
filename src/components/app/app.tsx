@@ -20,6 +20,8 @@ import { useEffect } from 'react';
 import { fetchUser } from '../../services/slices/userSlice';
 import { OrderModal } from '../modal/OrderModal';
 import { getCookie } from '../../utils/cookie';
+import { IngredientPage } from '../../pages/ingredient-page';
+import { OrderPage } from '../../pages/order-page';
 
 const App = () => {
   const location = useLocation();
@@ -39,9 +41,9 @@ const App = () => {
         <Route path='*' element={<NotFound404 />} />
         <Route path='/' element={<AppHeader />}>
           <Route index element={<ConstructorPage />} />
-          <Route path='feed' element={<Feed />}>
-            <Route path=':number' element={<OrderInfo />} />
-          </Route>
+          <Route path='ingredients/:id' element={<IngredientPage />} />
+          <Route path='feed' element={<Feed />} />
+          <Route path='feed/:number' element={<OrderPage />} />
           <Route
             path='login'
             element={<ProtectedRoute onlyUnAuth element={<Login />} />}
@@ -65,12 +67,11 @@ const App = () => {
           <Route
             path='profile/orders'
             element={<ProtectedRoute element={<ProfileOrders />} />}
-          >
-            <Route path=':number' element={<OrderInfo />} />
-          </Route>
-          <Route path='ingredients'>
-            <Route path=':id' element={<IngredientDetails />} />
-          </Route>
+          />
+          <Route
+            path='profile/orders/:number'
+            element={<ProtectedRoute element={<OrderPage />} />}
+          />
         </Route>
       </Routes>
 

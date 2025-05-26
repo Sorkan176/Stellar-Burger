@@ -5,6 +5,7 @@ const API_URL = process.env.BURGER_API_URL;
 
 interface MyOrdersState {
   isLoading: boolean;
+  isLoaded: boolean;
   myOrders: TOrder[];
   orderModalData: TOrder | null;
   error: string | null;
@@ -12,6 +13,7 @@ interface MyOrdersState {
 
 export const initialState: MyOrdersState = {
   isLoading: false,
+  isLoaded: false,
   myOrders: [],
   orderModalData: null,
   error: null
@@ -57,6 +59,7 @@ const MyOrdersSlice = createSlice({
       .addCase(fetchMyOrders.pending, (state) => {
         state.isLoading = true;
         state.error = null;
+        state.isLoaded = false;
       })
       .addCase(
         fetchMyOrders.fulfilled,
@@ -64,22 +67,29 @@ const MyOrdersSlice = createSlice({
           state.myOrders = action.payload;
           state.isLoading = false;
           state.error = null;
+          state.isLoaded = true;
         }
       )
       .addCase(fetchMyOrders.rejected, (state, action) => {
         state.isLoading = false;
+        state.isLoaded = false;
         state.error = action.error.message || 'Unknown error';
       });
   },
   selectors: {
     selectOrderModalData: (state) => state.orderModalData,
     selectMyOrders: (state) => state.myOrders,
-    selectIsMyOrdersLoading: (state) => state.isLoading
+    selectIsMyOrdersLoading: (state) => state.isLoading,
+    selectIsMyOrdersLoaded: (state) => state.isLoaded
   }
 });
 
-export const { selectOrderModalData, selectIsMyOrdersLoading, selectMyOrders } =
-  MyOrdersSlice.selectors;
+export const {
+  selectOrderModalData,
+  selectIsMyOrdersLoading,
+  selectMyOrders,
+  selectIsMyOrdersLoaded
+} = MyOrdersSlice.selectors;
 export const { closeOrderModalAction, clearMyOrders } = MyOrdersSlice.actions;
 
 export default MyOrdersSlice.reducer;

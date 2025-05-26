@@ -1,25 +1,56 @@
-import { FC, useMemo } from 'react';
+import { FC, useEffect, useMemo } from 'react';
 import { Preloader } from '../ui/preloader';
 import { OrderInfoUI } from '../ui/order-info';
 import { TIngredient } from '@utils-types';
 import { useLocation, useParams } from 'react-router-dom';
-import { useSelector } from '../../services/store';
-import { selectOrderList } from '../../services/slices/ordersSlice';
-import { selectIngredients } from '../../services/slices/ingredientsSlice';
-import { selectMyOrders } from '../../services/slices/myOrdersSlice';
+import { useDispatch, useSelector } from '../../services/store';
+import {
+  fetchOrders,
+  selectIsOrdersLoaded,
+  selectOrderList
+} from '../../services/slices/ordersSlice';
+import {
+  fetchIngredients,
+  selectIngredients,
+  selectIsLoaded
+} from '../../services/slices/ingredientsSlice';
+import {
+  fetchMyOrders,
+  selectIsMyOrdersLoaded,
+  selectMyOrders
+} from '../../services/slices/myOrdersSlice';
 
 export const OrderInfo: FC = () => {
   const { number } = useParams();
   const location = useLocation();
   const firstPathSegment = `/${location.pathname.split('/')[1]}`;
-  let orderList;
-  if (firstPathSegment === '/profile') {
-    orderList = useSelector(selectMyOrders);
-  } else {
-    orderList = useSelector(selectOrderList);
-  }
-  const orderData = orderList.find((order) => order.number === Number(number));
+  const isProfilePage = firstPathSegment === '/profile';
+
+  const dispatch = useDispatch();
+  const isIngredientsLoaded = useSelector(selectIsLoaded);
+  const isOrdersLoaded = useSelector(selectIsOrdersLoaded);
+  const isMyOrdersLoaded = useSelector(selectIsMyOrdersLoaded);
+
   const ingredients: TIngredient[] = useSelector(selectIngredients);
+  const publicOrders = useSelector(selectOrderList);
+  const privateOrders = useSelector(selectMyOrders);
+  const orderList = isProfilePage ? privateOrders : publicOrders;
+
+  useEffect(() => {
+    if (!isIngredientsLoaded) {
+      dispatch(fetchIngredients());
+    }
+  }, [dispatch, isIngredientsLoaded]);
+
+  useEffect(() => {
+    if (!isOrdersLoaded && !isProfilePage) {
+      dispatch(fetchOrders());
+    } else if (isProfilePage && !isMyOrdersLoaded) {
+      dispatch(fetchMyOrders());
+    }
+  }, [dispatch, isProfilePage, isOrdersLoaded, isMyOrdersLoaded]);
+
+  const orderData = orderList.find((order) => order.number === Number(number));
 
   /* Готовим данные для отображения */
   const orderInfo = useMemo(() => {

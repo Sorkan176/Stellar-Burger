@@ -11,7 +11,8 @@ import { Preloader } from '@ui';
 import {
   selectMyOrders,
   selectIsMyOrdersLoading,
-  fetchMyOrders
+  fetchMyOrders,
+  selectIsMyOrdersLoaded
 } from '../../services/slices/myOrdersSlice';
 import { selectUserLoading } from '../../services/slices/userSlice';
 
@@ -20,6 +21,7 @@ export const ProfileOrders: FC = () => {
   const isIngredientsLoading = useSelector(selectIsLoading);
   const isIngredientsLoaded = useSelector(selectIsLoaded);
   const isOrdersLoading = useSelector(selectIsMyOrdersLoading);
+  const isMyOrdersLoaded = useSelector(selectIsMyOrdersLoaded);
   const isLoading = useSelector(selectUserLoading);
 
   useEffect(() => {
@@ -27,9 +29,12 @@ export const ProfileOrders: FC = () => {
       dispatch(fetchIngredients());
     }
   }, [dispatch, isIngredientsLoaded]);
+
   useEffect(() => {
-    dispatch(fetchMyOrders());
-  }, [dispatch]);
+    if (!isMyOrdersLoaded) {
+      dispatch(fetchMyOrders());
+    }
+  }, [dispatch, isMyOrdersLoaded]);
 
   const orders: TOrder[] = useSelector(selectMyOrders);
 
