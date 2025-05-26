@@ -1,4 +1,4 @@
-import { FC, useMemo } from 'react';
+import { FC, useEffect, useMemo, useState } from 'react';
 import { TConstructorIngredient } from '@utils-types';
 import { BurgerConstructorUI } from '@ui';
 import { useDispatch, useSelector } from '../../services/store';
@@ -14,10 +14,12 @@ import {
 } from '../../services/slices/myOrdersSlice';
 import { useNavigate } from 'react-router-dom';
 import { getCookie } from '../../utils/cookie';
+import { fetchOrders } from '../../services/slices/ordersSlice';
 
 export const BurgerConstructor: FC = () => {
   const constructorItems = useSelector(selectBurgerConstructor);
   const { bun, ingredients } = constructorItems;
+  const [shouldFetchOrder, setShouldFetchOrder] = useState(false);
   const ingredientIds: string[] = [
     bun._id,
     ...ingredients.map((item) => item._id),
@@ -36,8 +38,17 @@ export const BurgerConstructor: FC = () => {
       return;
     }
     dispatch(fetchOrder(ingredientIds));
-    dispatch(clearConstructor());
+    setShouldFetchOrder(true);
   };
+
+  useEffect(() => {
+    if (!orderRequest && shouldFetchOrder) {
+      dispatch(fetchOrders());
+      dispatch(clearConstructor());
+      setShouldFetchOrder(false);
+    }
+  }, [orderRequest, shouldFetchOrder]);
+
   const closeOrderModal = () => {
     dispatch(closeOrderModalAction());
   };

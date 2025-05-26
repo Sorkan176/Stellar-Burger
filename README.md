@@ -25,7 +25,7 @@ npm install
 ### 3. Запуск проекта в dev-режиме
 
 ```bash
-npm start
+npm run start
 ```
 Проект запустится по адресу http://localhost:4000/
 
