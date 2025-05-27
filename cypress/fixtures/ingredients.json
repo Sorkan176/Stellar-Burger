@@ -1,0 +1,41 @@
+{
+  "success": true,
+  "data": [
+    {
+      "_id": "bun1",
+      "name": "Булка N-200i",
+      "type": "bun",
+      "price": 50,
+      "image": "https://code.s3.yandex.net/react/code/bun-02.png",
+      "image_large": "https://code.s3.yandex.net/react/code/bun-02-large.png",
+      "calories": 420,
+      "carbohydrates": 53,
+      "fat": 24,
+      "proteins": 80
+    },
+    {
+      "_id": "sauce1",
+      "name": "Соус Space",
+      "type": "sauce",
+      "price": 20,
+      "image": "https://code.s3.yandex.net/react/code/sauce-02.png",
+      "calories": 30,
+      "carbohydrates": 40,
+      "fat": 20,
+      "image_large": "https://code.s3.yandex.net/react/code/sauce-02-large.png",
+      "proteins": 30
+    },
+    {
+      "_id": "main1",
+      "name": "Мясо бессмертных",
+      "type": "main",
+      "price": 300,
+      "image": "https://code.s3.yandex.net/react/code/meat-04.png",
+      "calories": 2674,
+      "carbohydrates": 300,
+      "fat": 800,
+      "image_large": "https://code.s3.yandex.net/react/code/meat-04-large.png",
+      "proteins": 800
+    }
+  ]
+}
