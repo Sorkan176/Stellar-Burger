@@ -16,6 +16,7 @@
 ### 1. Установка зависимостей
 
 ```bash
+npm init
 npm install
 ```
 

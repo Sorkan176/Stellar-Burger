@@ -4,12 +4,15 @@ import reducer, {
   closeOrderModalAction,
   selectOrderModalData,
   selectMyOrders,
-  selectIsMyOrdersLoading, clearMyOrders
+  selectIsMyOrdersLoading,
+  clearMyOrders,
+  selectIsMyOrdersLoaded
 } from '../src/services/slices/myOrdersSlice';
 import { TOrder } from '../src/utils/types';
 
 const initialState = {
   isLoading: false,
+  isLoaded: false,
   myOrders: [],
   orderModalData: null,
   error: null
@@ -122,7 +125,7 @@ describe('myOrdersSlice reducer', () => {
     };
     const state = reducer(modifiedState, clearMyOrders());
     expect(state).toEqual(initialState);
-  })
+  });
 });
 
 describe('Селекторы MyOrdersSlice', () => {
@@ -147,6 +150,12 @@ describe('Селекторы MyOrdersSlice', () => {
   it('selectIsMyOrdersLoading должен вернуть true, если заказы загружаются', () => {
     const state = createMockState({ isLoading: true });
     const result = selectIsMyOrdersLoading(state);
+    expect(result).toBe(true);
+  });
+
+  it('selectIsMyOrdersLoaded должен вернуть true, если заказы загружены', () => {
+    const state = createMockState({ isLoaded: true });
+    const result = selectIsMyOrdersLoaded(state);
     expect(result).toBe(true);
   });
 });

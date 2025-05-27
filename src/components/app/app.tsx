@@ -12,7 +12,7 @@ import {
 import '../../index.css';
 import styles from './app.module.css';
 
-import { AppHeader, IngredientDetails, Modal, OrderInfo } from '@components';
+import { AppHeader, IngredientDetails, Modal } from '@components';
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { ProtectedRoute } from '../ProtectedRoute';
 import { useDispatch } from '../../services/store';
